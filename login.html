@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Trading Centre • Secure Access</title>
+  <style>
+    body { margin:0; background:#f4f6fb; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif; color:#111; }
+    .wrap { max-width:520px; margin:36px auto; padding:0 14px; }
+    .card { background:#fff; border-radius:16px; padding:18px; box-shadow:0 10px 26px rgba(0,0,0,.10); border:1px solid #e7ebf6; }
+    .brand { display:flex; align-items:center; gap:10px; margin-bottom:10px; }
+    .mark { width:34px; height:34px; border-radius:10px; background:#0b2a5a; display:grid; place-items:center; color:#fff; font-weight:950; letter-spacing:.3px; }
+    .name { font-weight:950; line-height:1.1; }
+    .name small { display:block; font-weight:800; color:#64748b; margin-top:2px; }
+    h1 { font-size:18px; margin:10px 0 4px; }
+    p { margin:0 0 14px; color:#475569; font-size:13px; line-height:1.45; }
+    label { font-size:12px; font-weight:900; color:#334; margin:10px 0 6px; display:block; }
+    input { width:100%; box-sizing:border-box; padding:11px 12px; border-radius:12px; border:1px solid #d7dbe6; font-size:14px; background:#fff; }
+    input:focus { outline:none; border-color:#7aa7ff; box-shadow:0 0 0 3px rgba(122,167,255,.2); }
+    .row { display:flex; gap:10px; margin-top:14px; }
+    button { width:100%; border:0; border-radius:12px; padding:12px; font-weight:950; cursor:pointer; }
+    .primary { background:#1a73e8; color:#fff; }
+    .secondary { background:#e9eef9; color:#1a3d8f; }
+    .error { display:none; margin-top:10px; font-size:12px; font-weight:900; color:#b00020; }
+    details { margin-top:14px; }
+    summary { cursor:pointer; font-weight:900; color:#1a3d8f; font-size:13px; }
+    .mini { font-size:12px; color:#64748b; margin-top:8px; line-height:1.45; }
+    .footer { text-align:center; color:#7a7a7a; font-size:12px; margin-top:10px; }
+    .pill { display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; font-weight:900; background:#fff7ed; border:1px solid #fed7aa; color:#7c2d12; margin-left:6px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="brand">
+        <div class="mark">TC</div>
+        <div class="name">
+          Trading Centre
+          <small>Secure case access</small>
+        </div>
+      </div>
+
+      <h1>Authorized access required <span class="pill">Internal</span></h1>
+      <p>
+        This interface contains settlement and compliance case material.
+        Access is restricted to designated operators and authorized client representatives.
+      </p>
+
+      <label for="u">Username</label>
+      <input id="u" type="text" autocomplete="username" />
+
+      <label for="p">Password</label>
+      <input id="p" type="password" autocomplete="current-password" />
+
+      <div id="error" class="error"></div>
+
+      <div class="row">
+        <button class="primary" id="loginBtn" type="button">Log in</button>
+        <button class="secondary" id="clearBtn" type="button">Clear</button>
+      </div>
+
+      
+      <details>
+        <summary>Change password</summary>
+        <div class="mini">
+          Password changes are stored locally in this browser only and apply to the selected account on this device.
+        </div>
+
+        <label for="cp_user">Account</label>
+        <input id="cp_user" type="text" placeholder="e.g. william" autocomplete="username" />
+
+        <label for="cur">Current password</label>
+        <input id="cur" type="password" autocomplete="current-password" />
+
+        <label for="np">New password</label>
+        <input id="np" type="password" placeholder="Minimum 4 characters" autocomplete="new-password" />
+
+        <div class="row">
+          <button class="secondary" id="updateBtn" type="button">Update password</button>
+        </div>
+
+        <div class="mini">
+          Accounts available: <b>test</b>, <b>william</b>, <b>sonia</b>, <b>charles</b>, <b>jay</b>
+        </div>
+      </details>
+
+    </div>
+
+    <div class="footer">Authorised access only. Reference ID required for correspondence.</div>
+  </div>
+
+  
+<script>
+  const ACCOUNTS_KEY = "tc_accounts_v1";
+  const SESSION_USER_KEY = "tc_session_user_v1";
+
+  const DEFAULT_ACCOUNTS = {
+    "test":    { pass: "test",   balance: "€45,897.27", currency: "EUR", status: "HOLD" },
+    "alex": { pass: "A1B2C3", balance: "£90,000.00", currency: "GBP", status: "HOLD" },
+    "alex": { pass: "A1B2C3", balance: "£90,000.00", currency: "GBP", status: "HOLD" },
+    "gabriel": { pass: "A1B2C3", balance: "£90,000.00", currency: "GBP", status: "HOLD" },
+    "alex": { pass: "A1B2C3", balance: "£90,000.00", currency: "GBP", status: "HOLD" },
+    "alex": { pass: "A1B2C3", balance: "£90,000.00", currency: "GBP", status: "HOLD" },
+    "james": { pass: "A1B2C3", balance: "£100,000.00", currency: "GBP", status: "HOLD" },
+    "alex": { pass: "A1B2C3", balance: "£90,000.00", currency: "GBP", status: "HOLD" },
+    "alex": { pass: "A1B2C3", balance: "£90,000.00", currency: "GBP", status: "HOLD" },
+    "william": { pass: "A1B2C3", balance: "£55,000.00", currency: "GBP", status: "HOLD" },
+    "sonia":   { pass: "A1B2C3", balance: "£60,000.00", currency: "GBP", status: "HOLD" },
+    "charles": { pass: "A1B2C3", balance: "£70,000.00", currency: "GBP", status: "HOLD" },
+    "jay":     { pass: "A1B2C3", balance: "£80,000.00", currency: "GBP", status: "HOLD" }
+  };
+
+  function loadAccounts() {
+    try {
+      const raw = localStorage.getItem(ACCOUNTS_KEY);
+      const parsed = raw ? JSON.parse(raw) : null;
+      if (!parsed || typeof parsed !== "object") throw new Error("no accounts");
+
+      // Normalize / migrate: keep any locally changed passwords,
+      // but enforce canonical balances/status so older stored defaults don't persist.
+      const merged = {};
+      for (const [user, def] of Object.entries(DEFAULT_ACCOUNTS)) {
+        const existing = parsed[user] && typeof parsed[user] === "object" ? parsed[user] : null;
+        merged[user] = {
+          pass: existing && typeof existing.pass === "string" ? existing.pass : def.pass,
+          balance: def.balance,
+          currency: def.currency,
+          status: def.status
+        };
+      }
+      // Preserve any extra accounts that might exist locally
+      for (const [user, data] of Object.entries(parsed)) {
+        if (!merged[user] && data && typeof data === "object") merged[user] = data;
+      }
+
+      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(merged));
+      return merged;
+    } catch (e) {
+      localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(DEFAULT_ACCOUNTS));
+      return DEFAULT_ACCOUNTS;
+    }
+  }
+
+  function saveAccounts(acc) {
+    localStorage.setItem(ACCOUNTS_KEY, JSON.stringify(acc));
+  }
+
+  function showError(msg) {
+    const el = document.getElementById("error");
+    el.textContent = msg;
+    el.style.display = "block";
+  }
+
+  function clearError() {
+    const el = document.getElementById("error");
+    el.textContent = "";
+    el.style.display = "none";
+  }
+
+  const params = new URLSearchParams(window.location.search);
+  const next = params.get("next") || "index.html";
+
+  const uEl = document.getElementById("u");
+  const pEl = document.getElementById("p");
+
+  // Preload defaults so the accounts always exist on first run
+  loadAccounts();
+
+  document.getElementById("loginBtn").addEventListener("click", () => {
+    clearError();
+    const u = (uEl.value || "").trim().toLowerCase();
+    const p = String(pEl.value || "");
+
+    const accounts = loadAccounts();
+    const acct = accounts[u];
+
+    if (acct && p === acct.pass) {
+      sessionStorage.setItem(SESSION_USER_KEY, u);
+      window.location.href = next;
+      return;
+    }
+    showError("Invalid account or password.");
+  });
+
+  document.getElementById("clearBtn").addEventListener("click", () => {
+    uEl.value = "";
+    pEl.value = "";
+    clearError();
+    uEl.focus();
+  });
+
+  document.getElementById("updateBtn").addEventListener("click", () => {
+    clearError();
+
+    const user = (document.getElementById("cp_user").value || "").trim().toLowerCase();
+    const cur = String(document.getElementById("cur").value || "");
+    const np = String(document.getElementById("np").value || "");
+
+    if (!user) return showError("Enter an account name.");
+    if (np.length < 4) return showError("New password must be at least 4 characters.");
+
+    const accounts = loadAccounts();
+    if (!accounts[user]) return showError("Account not recognised.");
+
+    if (accounts[user].pass !== cur) return showError("Current password is incorrect.");
+
+    accounts[user].pass = np;
+    saveAccounts(accounts);
+
+    document.getElementById("cur").value = "";
+    document.getElementById("np").value = "";
+    showError("Password updated.");
+  });
+</script>
+
+</body>
+</html>
